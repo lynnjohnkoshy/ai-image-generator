@@ -1,25 +1,26 @@
 # AI Image Generator 🎨
 
-A full-stack web application that generates images from text prompts using the OpenAI API. This project was built to learn how to integrate and securely use an OpenAI API key in a real-world React + Node.js application.
+![AI Image Generator](./assets/preview.png)
 
-### 🧰 Tech Stack
+## General Project Overview 
 
-Frontend: React (Vite), JavaScript, HTML, CSS, REST API  
-Backend: Node.js, Express.js, CORS, dotenv (for environment variables)  
-AI Service: OpenAI API (`gpt-image-1`)
+A full-stack web application that generates images from text prompts using the OpenAI API. This project was built to learn how to integrate and securely use an OpenAI API key in a MERN stack application.
 
-### 🚀 What it does
+### Tech Stack
+- Frontend: React (Vite), JavaScript, HTML, CSS, REST API  
+- Backend: Node.js, Express.js, CORS, dotenv (for environment variables)  
+- AI Service: OpenAI API (`gpt-image-1`)
+
+### How It Works
 - User enters a text prompt
 - Backend sends request to OpenAI API
 - AI generates an image
 - Image is returned as base64
 - Frontend displays the image instantly
 
-![AI Image Generator](./assets/preview.png)
-
 ---
 
-## ⚙️ Setup Instructions
+## Setup Instructions
 
 ### 1. Install dependencies
 
