@@ -1,5 +1,7 @@
 const express = require("express");
 const cors = require("cors"); // Allows backend and frontend to communicate even if they are on different ports (no stranger danger)
+const OpenAI = require("openai");
+require("dotenv").config(); // Loads environment variables from .ENV file
 
 const PORT = 8080;
 const app = express();
@@ -7,41 +9,50 @@ const app = express();
 app.use(cors())
 app.use(express.json()) // Allows to automatically read json (e.g., access like "req.body.name")
 
-const path = require("path");
-app.use("/", express.static(path.join(__dirname, "public")));
-console.log("__dirname:", __dirname);
-
-app.get("/api/test", (req, res) => {
-    res.json({
-        message: "Backend connected successfully 🚀",
-    });
+const openAI = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY
 });
 
-app.post("/api/test", (req, res) => {
-  try {
-    console.log(req.body);
+app.post("/api/generate-image", async (req, res) => {
+    
+    try {
 
-    if (!req.body || !req.body.name) {
-      return res.status(400).json({
-        success: false,
-        message: "Name is required"
-      });
+        const prompt = req.body.prompt;
+
+        if (!prompt) {
+            return res.status(400).json({
+                success: false,
+                message: "No prompt inputed."
+            });
+        }
+
+        console.log("STEP 1: route hit");
+        console.log("Prompt:", prompt);
+
+        const response = await openAI.images.generate({
+            model: "gpt-image-1",
+            prompt: prompt,
+            size: "1024x1024",
+        });
+
+        console.log("STEP 2: OpenAI responded");
+        console.log(response);
+
+        const imageUrl = response.data[0].b64_json;
+
+        return res.status(200).json({
+            success: true,
+            image: imageUrl
+        });
+
+    } catch (err) {
+        console.log("Server Error:", err);
+
+        return res.status(500).json({
+            success: false,
+            message: "Image generation failed"
+        });
     }
-
-    res.status(200).json({
-      success: true,
-      message: "Data received!",
-      received: req.body
-    });
-
-  } catch (error) {
-    console.error("Server error:", error);
-
-    res.status(500).json({
-      success: false,
-      message: "Internal server error"
-    });
-  }
 });
 
 app.listen(PORT, () => {

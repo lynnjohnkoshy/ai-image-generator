@@ -3,42 +3,65 @@ import './App.css'
 
 function App() {
 
-  const [message, setMessage] = useState("");
+  const [promptMsg, setPromptMsg] = useState("");
+  const [imgURL, setImgURL] = useState("");
 
-  async function getData() {
-    try {
-      const res = await fetch("http://localhost:8080/api/test");
-      const data = await res.json();
-      setMessage(data.message);
-    } catch (err) {
-      console.log("Error: " + err)
-    };
-  };
+  async function sendPrompt() {
 
-  async function sendData() {
     try {
-      const res = await fetch("http://localhost:8080/api/test", {
+      const res = await fetch("http://localhost:8080/api/generate-image", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          name: "Lynn"
+          prompt: promptMsg
         })
-      });
-      const data = await res.json()
-      console.log(data);
-    } catch (err) {
-      console.log("Error: " + err)
-    }
-  };
+      })
 
+      const data = await res.json();
+      console.log(data);
+
+      if (data.success) {
+        setImgURL(`data:image/png;base64, ${data.image}`); // Convert base64 string to image URL     
+      } else {
+        console.log(data.message);
+      }
+
+    } catch (err) {
+      console.log("Frontend Error", err);
+    };
+
+  };
   return (
     <>
-      <button onClick={getData}>Get Data</button>
-      <p>{message}</p>
+      <div style={{ textAlign: "center", marginTop: "60px" }}>
 
-      <button onClick={sendData}>Send Data</button>
+        <h1>AI Image Generator</h1>
+
+        <input
+          value={promptMsg}
+          onChange={(e) => setPromptMsg(e.target.value)}
+          placeholder="Enter prompt..."
+        />
+
+        <button onClick={sendPrompt}>Generate </button>
+
+        <br/>
+        <br/>
+
+        {imgURL && (
+          <img
+            src={imgURL}
+            alt="Generated AI"
+            style={{
+              width: "300px",
+              borderRadius: "10px"
+            }}
+          />
+        )}
+     
+      </div>
     </>
   )
 }
